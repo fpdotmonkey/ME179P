@@ -29,7 +29,9 @@ function will return NaN.
 
 The method used to find this distance was to construct lines parallel
 to p1-p2 through q.  Another line was contructed perpendicular to these
-lines through the origin.  The points where this line intersected the other lines were found, and then the distance between these points is the answer."""
+lines through the origin.  The points where this line intersected the
+other lines were found, and then the distance between these points is
+the answer."""
     (a, b, c) = computeLineThroughTwoPoints(p1, p2)
     try:
         distance = abs(a * q[0] + b * q[1] + c) / math.sqrt(a ** 2 + b ** 2)
