@@ -46,6 +46,15 @@ the answer."""
         return float("nan")
 
 
+def findNearestPointOnSegmentToPoint(q, p1, p2):
+    t_min = min(max(((q[0] - p1[0]) * (p2[0] - p1[0]) \
+                     + (q[1] - p1[1]) * (p2[1] - p1[1])) \
+                    / ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2), \
+                    0), \
+                1)
+
+    return [ p1[0] + t_min * (p2[0] - p1[0]), p1[1] + t_min * (p2[1] - p1[1]) ]
+    
 def computeDistancePointToSegment(q, p1, p2):
     """
 This function calculates the minimum distance from a point to a line
@@ -60,15 +69,9 @@ on the segment.  This general distance was differentiated and set to 0
 to find the minimum t, t_min.  This was then plugged into the distance
 formula to get the minimum distance between q and the segment."""
     try:
-        t_min = min(max(((q[0] - p1[0]) * (p2[0] - p1[0]) \
-                         + (q[1] - p1[1]) * (p2[1] - p1[1])) \
-                        / ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2), \
-                        0), \
-                    1)
-        minimumDistance = math.sqrt((p1[0] - q[0] \
-                                     + t_min * (p2[0] - p1[0])) ** 2 \
-                                    + (p1[1] - q[1] \
-                                       + t_min * (p2[1] - p1[1])) ** 2)
+        nearestPointOnSegment = findNearestPointOnSegmentToPoint(q, p1, p2)
+        minimumDistance = ((nearestPointOnSegment[0] - q[0]) ** 2 \
+                           + (nearestPointOnSegment[1] - q[1]) ** 2) ** 0.5
         return minimumDistance
     except ZeroDivisionError:
         return math.sqrt((p1[0] - q[0]) ** 2 + (p1[1] - q[1]) ** 2)
