@@ -25,6 +25,22 @@ returns if a testpoint is on a vertex, so I have to make it consistent."""
         
         return False
 
+def vectorFrom(point1, toPoint2):
+    return [ toPoint2[0] - point1[0],
+             toPoint2[1] - point1[1] ]
+
+def dotProduct(vector1, vector2):
+    return vector1[0] * vector2[0] + vector1[1] * vector2[1]
+
+def furthestFromZero(iterable):
+    minimum = min(iterable)
+    maximum = max(iterable)
+
+    if (abs(minimum) > abs(maximum)):
+        return minimum
+    else:
+        return maximum
+
 def findNearestSegmentToPoint(polygon, point):
     """
 Finds the vertex of a polygon that is closest to the point as well as
@@ -36,15 +52,27 @@ Returns the indices of these vertices in polygon."""
     for vertex in polygon:
         distancesToVertices.append(((point[1] - vertex[1]) ** 2 \
                                     + (point[0] - vertex[0])**2) ** 0.5)
+
     vertexWithMinimumDistance = \
         distancesToVertices.index(min(distancesToVertices))
-    nearestAdjacentVertex = \
-        distancesToVertices.index(
-            min(
-                distancesToVertices[(vertexWithMinimumDistance + 1) % 3], 
-                distancesToVertices[vertexWithMinimumDistance - 1]))
 
-    return [ vertexWithMinimumDistance, nearestAdjacentVertex ]
+    vectorsToAdjacentVertices = \
+        [ vectorFrom(polygon[vertexWithMinimumDistance],
+                     polygon[vertexWithMinimumDistance - 1]),
+          vectorFrom(polygon[vertexWithMinimumDistance],
+                     polygon[(vertexWithMinimumDistance + 1) % len(polygon)]) ]
+    vectorToPoint = vectorFrom(polygon[vertexWithMinimumDistance], point)
+
+    nearnessToAdjacentVertices = \
+        [ dotProduct(vectorToPoint, vectorsToAdjacentVertices[0]),
+          dotProduct(vectorToPoint, vectorsToAdjacentVertices[1]) ]
+
+    vertexCompletingSegment = \
+        (vertexWithMinimumDistance + 2 * nearnessToAdjacentVertices. \
+        index((furthestFromZero(nearnessToAdjacentVertices))) - 1) \
+        % len(polygon)
+
+    return [ vertexWithMinimumDistance, vertexCompletingSegment ]
 
 
         
@@ -60,14 +88,17 @@ segment to the point."""
         # otherwise, find the nearest vertex to the point and the nearest
         # neighbor of that vertex to the point, and find the distance from
         # the segment defined by these vertices and the point
-        [ vertexWithMinimumDistance, nearestAdjacentVertex] = \
+        [ vertexWithMinimumDistance, vertexCompletingSegment ] = \
             findNearestSegmentToPoint(polygon, point)
                 
         return linesAndSegments.computeDistancePointToSegment(
             point,
             polygon[vertexWithMinimumDistance],
-            polygon[nearestAdjacentVertex])
+            polygon[vertexCompletingSegment])
 
+
+# def computeTangentVectorToPolygon(polygon, point):
+    
     
 def computeTangentVectorToPolygon(polygon, point):
     """
@@ -86,12 +117,12 @@ Finds the nearest segment to the polygon and the nearest point on that segment t
             point,
             polygon[nearestSegmentToPoint[0]],
             polygon[nearestSegmentToPoint[1]])
-        
-        [ a, b, c ] = linesAndSegments.\
+    
+        [ a, b, _ ] = linesAndSegments.\
                       computeLineThroughTwoPoints(nearestPoint, point)
 
         scalingFactor = (a ** 2 + b ** 2) ** -0.5
-        
+    
         pointForTangentLine = [ point[0] - scalingFactor * a,
                                 point[1] - scalingFactor * b ]
         
@@ -110,9 +141,10 @@ if "__main__" == __name__:
     print(computeDistancePointToPolygon(testPolygonTriangle, [1.1, 0]))
     print(computeDistancePointToPolygon(testPolygonTriangle, [-0.1, -0.1]))
     print(computeDistancePointToPolygon(testPolygonTriangle, [0.6, 0.6]))
+    print(computeDistancePointToPolygon(testPolygonTriangle, [1.1, 0.1]))
 
     print("\ncomputeTangentVectorToPolygon()")
-    print(computeTangentVectorToPolygon(testPolygonTriangle, [0, 0]))
+    #print(computeTangentVectorToPolygon(testPolygonTriangle, [0, 0]))
     print(computeTangentVectorToPolygon(testPolygonTriangle, [0, 0.5]))
     print(computeTangentVectorToPolygon(testPolygonTriangle, [0.1, 0.1]))
     print(computeTangentVectorToPolygon(testPolygonTriangle, [0, 1.1]))
