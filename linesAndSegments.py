@@ -11,14 +11,10 @@ The method used to find these coefficients was to find the point-slope
 form of the line, which is taught in introductory algebra classes.  I then
 rearranged the formula so all terms are on one side and so there is no
 possibility of 0-division."""
-    try:
-        a = p2[1] - p1[1]
-        b = p1[0] - p2[0]
-        c = (p1[1] - p2[1]) * p1[0] + (p2[0] - p1[0]) * p1[1]
-        return (a, b, c)
-    
-    except TypeError:
-        return float("nan")
+    a = p2[1] - p1[1]
+    b = p1[0] - p2[0]
+    c = (p1[1] - p2[1]) * p1[0] + (p2[0] - p1[0]) * p1[1]
+    return (a, b, c)
 
 def computeDistancePointToLine(q, p1, p2):
     """
@@ -42,8 +38,6 @@ the answer."""
             return math.sqrt((p1[0] - q[0]) ** 2 + (p1[1] - q[1]) ** 2)
         else:
             return float("nan")
-    except TypeError:
-        return float("nan")
 
 
 def findNearestPointOnSegmentToPoint(q, p1, p2):
@@ -75,8 +69,6 @@ formula to get the minimum distance between q and the segment."""
         return minimumDistance
     except ZeroDivisionError:
         return math.sqrt((p1[0] - q[0]) ** 2 + (p1[1] - q[1]) ** 2)
-    except TypeError:
-        return float("nan")
 
 
 

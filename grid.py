@@ -47,7 +47,6 @@ if it is a divisor of n.  Doesn't raise an OverflowError for n > 2**31 - 1
 def haltonSequence(index, base):
     """
 Computes the indexth number in the halton sequence with base base."""
-    # TODO: make this a generator
     assert index > -1, "haltonSequence: index must be a non-negative."
     assert isPrime(base), "haltonSequence: base must be prime"
     
